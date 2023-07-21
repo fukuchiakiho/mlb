@@ -101,11 +101,11 @@ class RnnlmTrainer:
         self.eval_interval = eval_interval
         model, optimizer = self.model, self.optimizer
         total_loss = 0
-        #loss_count = 0
+        loss_count = 0
 
         start_time = time.time()
         for epoch in range(max_epoch):
-            total_loss = 0
+            #total_loss = 0
             #print(total_loss)
             for iters in range(max_iters):
                 #batch_x, batch_t = self.get_batch(xs, ts, batch_size, time_size)
