@@ -3,9 +3,10 @@ import sys
 sys.path.append('..')
 import numpy as np
 from common.time_layers import *
+import pickle
 
 
-class SimpleRnnlm:
+class SimpleRnnbb:
     def __init__(self, output_size, input_size, hidden_size):
         V, D, H = output_size, input_size, hidden_size
         rn = np.random.randn
@@ -15,7 +16,13 @@ class SimpleRnnlm:
         rnn_b = np.zeros(H).astype('f')
         affine_W = (rn(H, V) / np.sqrt(H)).astype('f')
         affine_b = np.zeros(V).astype('f')
-
+        '''
+        rnn_Wx = rnn_Wx.tolist()
+        rnn_Wh = rnn_Wh.tolist()
+        rnn_b = rnn_b.tolist()
+        affine_W = affine_W.tolist()
+        affine_b = affine_b.tolist()
+        '''
         # レイヤの生成
         self.layers = [
             TimeRNN(rnn_Wx, rnn_Wh, rnn_b, stateful=True),
@@ -44,3 +51,7 @@ class SimpleRnnlm:
 
     def reset_state(self):
         self.rnn_layer.reset_state()
+
+    def save_params(self, file_name='Rnnlm.pkl'):
+        with open(file_name, 'wb') as f:
+            pickle.dump(self.params, f)
