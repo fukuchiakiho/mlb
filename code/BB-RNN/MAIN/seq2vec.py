@@ -1,11 +1,14 @@
 import sys
 sys.path.append('..')
 import os
-from common.optimizer import SGD
-from common.trainer import RnnlmTrainer
+import pickle
 import pandas as pd
-from simple_rnnbb import SimpleRnnbb
 import numpy as np
+from keras.models import Sequential
+from keras.layers import Embedding, LSTM, Dense
+#from common.optimizer import SGD
+#from common.trainer import RnnlmTrainer
+#from simple_rnnbb import SimpleRnnbb
 
 name1 = "20220407_0831_SabrVec_learn"
 name2 = "test"
@@ -66,7 +69,7 @@ t = []
 all_l = []
 all_tl = []
 max_il = []
-seqences = []
+sequences = []
 
 #入力データ
 
@@ -109,7 +112,7 @@ for j in range(1, max_num+1):
     tm.append(tx)
         #l.append(m)
         #l = []
-    seqences.append(m)
+    sequences.append(m)
     m = []
         #for b in range(re_pa):
             #tm.append(11.0)
@@ -141,7 +144,19 @@ for j in range(1, max_num+1):
             #tx = []'''
 
 #ndarray形式にキャスト
-seqences = np.array(seqences)
-tm = np.array(tm)
-tm = tm.astype('int64')
+sequences = np.array(sequences)
+scores = np.array(tm)
+scores = scores.astype('int64')
 #print(tm[:20])
+
+hidden_units = 6   # LSTMの隠れユニット数
+
+model = Sequential()
+model.add(LSTM(hidden_units))
+model.add(Dense(1, activation='relu'))
+
+model.compile(loss='mean_squared_error', optimizer='adam')
+history = model.fit(sequences, scores, epochs=2000, batch_size=10)
+
+with open('seq2vec_2000.pkl', 'wb') as hf:
+     pickle.dump(history.history, hf)
